@@ -4,11 +4,14 @@ const express = require('express');
 const app = express();
 //importing express layouts 
 const expressLayouts = require('express-ejs-layouts');
+//importing database to main index file
+const db = require('./config/mongoose');
 
 //creating port for our server
 const port = 8000;
 //using layouts for views to structure the page 
 app.use(expressLayouts);
+
 
 //extract style and pages from sub pages into the layout
 app.set('layout extractStyles', true);
