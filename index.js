@@ -9,6 +9,11 @@ const port = 8000;
 //using router to route to other files
 app.use('/', require('./routes'));
 
+
+//setting up the view engine
+app.set('view engine', 'ejs');
+app.set('views', './views');
+
 //listening server
 app.listen(port, function(err){
 	if(err){
