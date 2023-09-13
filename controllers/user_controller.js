@@ -10,6 +10,22 @@ module.exports.profile = async function(req, res){
 	});
 }
 
+//updating the users profile
+module.exports.update = async function(req, res){
+	try {
+		if(req.user.id == req.params.id){
+			const user = await User.findByIdAndUpdate(req.params.id, {
+				name:req.body.name,
+				email:req.body.email
+			});
+			return res.redirect('/');
+		}
+	} catch (error) {
+		console.error(error);
+    	res.status(500).send('Internal Server Error');
+	}	
+}
+
 
 //rendering the signup page
 module.exports.signUp = function(req, res){
@@ -59,7 +75,7 @@ module.exports.create =  async function(req, res){
 
 // sign in and create a session for the user
 module.exports.createSession = function(req, res){
-	console.log(req.body);
+	req.flash('success', "Logged in Successfully");
 	return res.redirect('/');
 }
 
@@ -68,6 +84,8 @@ module.exports.destroySession = function(req, res, next){
 		if(err){
 			return next(err);
 		}
+		req.flash('success', "User Logged out");
+
 		return res.redirect('/users/sign-in');
 	});
 

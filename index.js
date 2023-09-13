@@ -14,6 +14,8 @@ const session = require('express-session');//importing express session for the s
 const passport = require('passport');
 const passportLocal = require('./config/passport-local-strategy');
 const MongoStore = require('connect-mongo');
+const flash = require('connect-flash');
+const customMware = require('./config/middleware');
 
 //creating port for our server
 const port = 8000;
@@ -58,6 +60,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(passport.setAuthenticatedUser);
+
+//setting up flash for notification
+app.use(flash());
+app.use(customMware.setFlash);
 
 //using router to route to other files
 app.use('/', require('./routes'));

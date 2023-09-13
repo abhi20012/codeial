@@ -7,11 +7,11 @@ const commentSchema = new mongoose.Schema({
 	},
 	//comment belongs to a user
 	user:{
-		type:mongoose.SchemaTypes.ObjectId,
+		type:mongoose.Schema.Types.ObjectId,
 		ref: 'User'
 	},
 	post:{
-		type:mongoose.SchemaTypes.ObjectId,
+		type:mongoose.Schema.Types.ObjectId,
 		ref: 'Post'
 	},
 	//include the array of ids of  all comments in this post schema itself
