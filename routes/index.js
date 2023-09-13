@@ -11,6 +11,9 @@ router.get('/', homeController.home);
 //router to get to users controllers
 router.use('/users', require('./users'));
 
+//router to get to post routes
+router.use('/posts', require('./posts'));
+
 
 console.log('Router loaded');
 
