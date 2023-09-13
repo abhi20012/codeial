@@ -14,6 +14,7 @@ const port = 8000;
 //using layouts for views to structure the page 
 app.use(expressLayouts);
 
+app.use(express.urlencoded());
 //using cookie parser 
 app.use(cookieParser());
 
