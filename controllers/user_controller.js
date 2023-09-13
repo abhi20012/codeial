@@ -10,6 +10,9 @@ module.exports.profile = function(req, res){
 
 //rendering the signup page
 module.exports.signUp = function(req, res){
+	if(req.isAuthenticated()){
+		return res.redirect('/users/profile');
+	}
 	return res.render('user_sign_up', {
 		title:"Sign Up page"
 	})
@@ -17,6 +20,9 @@ module.exports.signUp = function(req, res){
 
 //rendering the signin page
 module.exports.signIn = function(req, res){
+	if(req.isAuthenticated()){
+		return res.redirect('/users/profile');
+	}
 	return res.render('user_sign_in', {
 		title:"Sign In page"
 	})
@@ -36,6 +42,7 @@ module.exports.create =  async function(req, res){
 				return res.redirect('/users/sign-in');
 			} catch (error) {
 				console.log("Error in creating a user :: User Controller Error", error);
+				return;
 			}
 		}else{
 			alert("User already exist");
@@ -43,10 +50,22 @@ module.exports.create =  async function(req, res){
 		}
 	} catch (error) {
 		console.log("Error in finding the user::User Controller Error", error);
+		return;
 	}
 }
 
 // sign in and create a session for the user
 module.exports.createSession = function(req, res){
-	//TODO later
+	console.log(req.body);
+	return res.redirect('/');
+}
+
+module.exports.destroySession = function(req, res, next){
+	req.logout(function(err){
+		if(err){
+			return next(err);
+		}
+		return res.redirect('/users/sign-in');
+	});
+
 }
