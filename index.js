@@ -1,5 +1,7 @@
 //importing express for main index file
 const express = require('express');
+//importing cookie-parser
+const cookieParser = require('cookie-parser');
 //creating express app
 const app = express();
 //importing express layouts 
@@ -11,6 +13,9 @@ const db = require('./config/mongoose');
 const port = 8000;
 //using layouts for views to structure the page 
 app.use(expressLayouts);
+
+//using cookie parser 
+app.use(cookieParser());
 
 
 //extract style and pages from sub pages into the layout
