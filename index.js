@@ -25,8 +25,10 @@ app.use(express.urlencoded());
 app.use(cookieParser());
 
 
+app.use('/uploads', express.static(__dirname + '/uploads'));
 //using static files
 app.use(express.static('./assets'));
+//makes the uploads path available to the browser
 //extract style and pages from sub pages into the layout
 app.set('layout extractStyles', true);
 app.set('layout extractScripts', true);

@@ -1,4 +1,6 @@
 const User = require('../models/user');
+const fs = require('fs');
+const path = require('path');
 
 
 module.exports.profile = async function(req, res){
@@ -11,20 +13,38 @@ module.exports.profile = async function(req, res){
 }
 
 //updating the users profile
-module.exports.update = async function(req, res){
-	try {
-		if(req.user.id == req.params.id){
-			const user = await User.findByIdAndUpdate(req.params.id, {
-				name:req.body.name,
-				email:req.body.email
-			});
-			return res.redirect('/');
-		}
-	} catch (error) {
-		req.flash('error', 'Unauthorized');
-    	res.status(500).send('Internal Server Error');
+module.exports.update = async function(request, respond){
+	if(request.user.id == request.params.id){
 
-	}	
+		try{
+			let user = await User.findByIdAndUpdate(request.params.id);
+			User.uploadedAvatar(request, respond, function(err){
+				if(err) {console.log('******Multer Error', err)}
+				// without body we can't read this bcoz its multi part
+				user.name = request.body.name;
+				user.email = request.body.email;
+
+				if(request.file){
+
+					if(user.avatar){
+						// fs.unlinkSync(path.join(__dirname, '..', user.avatar));
+						fs.existsSync(path.join(__dirname, '..',user.avatar));
+					}
+					// this is saving the path of the uploaded file into the avatar field in the user 
+					user.avatar = User.avatarPath + '/' + request.file.filename;
+				}
+				user.save();
+				return respond.redirect('back');
+			});
+		}catch(err){
+			request.flash('error', err);
+			return respond.redirect('back');
+		}
+	}
+	else{
+		request.flash('error', 'Unauthorized!');
+		return respond.status(401).send('Unauthorized');
+	}
 }
 
 
