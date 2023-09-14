@@ -21,8 +21,9 @@ module.exports.update = async function(req, res){
 			return res.redirect('/');
 		}
 	} catch (error) {
-		console.error(error);
+		req.flash('error', 'Unauthorized');
     	res.status(500).send('Internal Server Error');
+
 	}	
 }
 
