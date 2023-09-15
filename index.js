@@ -1,5 +1,7 @@
 const express = require('express');//importing express for main index file
 
+const env = require('./config/environment.js');
+
 const cookieParser = require('cookie-parser');//importing cookie-parser
 
 const app = express();//creating express app
@@ -18,6 +20,7 @@ const passportGoogle = require('./config/passport-google-oauth2-strategy');
 const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const customMware = require('./config/middleware');
+const path = require('path');
 
 //creating port for our server
 const port = 8000;
@@ -34,7 +37,6 @@ app.use(cookieParser());
 
 app.use('/uploads', express.static(__dirname + '/uploads'));
 //using static files
-app.use(express.static('./assets'));
 //makes the uploads path available to the browser
 //extract style and pages from sub pages into the layout
 app.set('layout extractStyles', true);
@@ -44,11 +46,12 @@ app.set('layout extractScripts', true);
 //setting up the view engine
 app.set('view engine', 'ejs');
 app.set('views', './views');
-
+app.use(express.static(__dirname + env.asset_path));
+app.use(express.static(__dirname + '/public/assets'));
 
 app.use(session({
 	name:'Codeial',
-	secret:'demoKey',
+	secret:env.session_cookie_key,
 	saveUninitialized:false,
 	resave:false,
 	cookie:{

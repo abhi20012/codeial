@@ -31,11 +31,11 @@
             <% for(u of all_users){ %>
                 <% if(u.id != locals.user.id){ %>
                 <li>
-                    <img src="<%= u.avatar %>" alt="<%= u.name %>" width="100"></img>
+                    <img src="<%=u.avatar%>" alt="<%= u.name %>" width="100"></img>
 
-                    <a class="user-list-name" href="/users/profile/<%= u.id %>"><%= u.name %></a>
+                    <a class="user-list-name" href="/users/profile/<%=u.id%>"><%= u.name %></a>
 
-                    <a class="add-friend-btn remove-add-btn" href="/friends/friendship/add/?toUser=<%= u._id %>"> <!-- /?id=<%=u._id%> -->
+                    <a class="add-friend-btn remove-add-btn" href="/friends/friendship/add/?toUser=<%=u._id%>"> <!-- /?id=<%=u._id%> -->
                         Add Friend
                     </a>
                 </li>
@@ -43,6 +43,7 @@
             <% } %>
         </ul>
     </section>
+    <%- include('_chat') -%>
 </div>
 
 
@@ -62,4 +63,10 @@
 <!-- socket.io cdn -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.1/socket.io.js"></script>
 <script src="/js/chat_engine.js"></script>
+
+<% if(locals.user){%>
+    <script>
+        new ChatEngine('chatbox', '<%= locals.user.email %>', '<%= locals.user.name %>');
+    </script>
+<% } %>
 
