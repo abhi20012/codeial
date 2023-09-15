@@ -14,6 +14,21 @@
 			let newPost = newPostDom(data.data.post);
 			$('#posts-list-container>ul').prepend(newPost);
 			deletePost($('.delete-post-button', newPost));
+ 			
+			
+			// call the create comment class
+			new PostComments(data.data.post._id);
+                    
+			new ToggleLike($(' .toggle-like-button', newPost));
+
+			new Noty({
+				theme: 'relax',
+				text: "Post published !!!",
+				type: 'success',
+				layout: 'topRight',
+				timeout: 1500
+				
+			}).show();
         },
         error: function (error) {
           console.log(error.responseText);
@@ -34,7 +49,11 @@
 		${post.content}
 		<br>
 		<small>
-			${post.user.name}
+                            
+		<a class="toggle-like-button" data-likes="${ post.likes.length }" href="/likes/toggle/?id=${post._id}&type=Post">
+			<i class="fa-regular fa-heart"></i> ${ post.likes.length } likes
+		</a>
+
 		</small>
 	</p>
 	<div class="post-comments">
@@ -63,6 +82,15 @@
 			url:${deleteLink}.prop('href'),
 			success: function(data){
 				$(`#post-${data.data.post_id}`).remove();
+
+				new Noty({
+					theme: 'relax',
+					text: "Post Deleted !!!",
+					type: 'success',
+					layout: 'topRight',
+					timeout: 1500
+					
+				}).show();
 			}, error: function(error){
 				console.log(error.responseText)
 			}

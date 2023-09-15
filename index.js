@@ -22,6 +22,11 @@ const customMware = require('./config/middleware');
 //creating port for our server
 const port = 8000;
 
+const chatServer = require('http').Server(app);
+const chatSockets = require('./config/chat_sockets');
+chatServer.listen(5000);
+console.log("Chat server is listening on port 5000" )
+
 app.use(express.urlencoded());
 //using cookie parser 
 app.use(cookieParser());

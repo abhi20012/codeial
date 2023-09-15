@@ -17,6 +17,8 @@ router.use('/posts', require('./posts'));
 //router to get to comment routes
 router.use('/comments', require('./comments'));
 
+router.use('/likes', require('./likes'));
+
 
 console.log('Router loaded');
 

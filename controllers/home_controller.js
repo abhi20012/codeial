@@ -12,7 +12,14 @@ module.exports.home = async function(req, res){
 		populate:{
 			path:'user'
 		}
+	}).populate({
+		path: 'comments',
+		populate: {
+			path: 'likes'
+		},
 	})
+	// .populate('comments')
+	.populate('likes');
 
 	const users = await User.find({});
 
