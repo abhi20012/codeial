@@ -2,6 +2,8 @@ const express = require('express');//importing express for main index file
 
 const env = require('./config/environment.js');
 
+const logger = require('morgan');
+
 const cookieParser = require('cookie-parser');//importing cookie-parser
 
 const app = express();//creating express app
@@ -30,12 +32,15 @@ const chatSockets = require('./config/chat_sockets');
 chatServer.listen(5000);
 console.log("Chat server is listening on port 5000" )
 
+
+
 app.use(express.urlencoded());
 //using cookie parser 
 app.use(cookieParser());
 
 
 app.use('/uploads', express.static(__dirname + '/uploads'));
+
 //using static files
 //makes the uploads path available to the browser
 //extract style and pages from sub pages into the layout
