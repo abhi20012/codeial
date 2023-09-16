@@ -18,7 +18,6 @@ module.exports.home = async function(req, res){
 			path: 'likes'
 		},
 	})
-	// .populate('comments')
 	.populate('likes');
 
 	const users = await User.find({});
@@ -26,8 +25,8 @@ module.exports.home = async function(req, res){
 	return res.render('home', {
 		title:"Home",
 		posts:posts,
-		all_users:users
+		all_users:users,
+		
 	});
-
-	
 }
+

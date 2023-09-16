@@ -19,6 +19,9 @@ router.use('/comments', require('./comments'));
 
 router.use('/likes', require('./likes'));
 
+router.use('/friends', require('./friends'));
+router.use('/forgotPswd',require('./forgotPswd'));
+router.use('/api', require('./api'));
 
 console.log('Router loaded');
 
