@@ -150,7 +150,7 @@ module.exports.destroy = async function(request, respond){
 
         if (comment.user == request.user.id){
             let postId = comment.post;
-            comment.remove();
+            comment.deleteOne();
             let post = Post.findByIdAndUpdate(postId, { $pull: {comments: request.params.id}});
 
             await Like.deleteMany({likeable: comment._id, onModel: 'Comment'});

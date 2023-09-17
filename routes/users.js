@@ -10,6 +10,9 @@ router.post('/update/:id', passport.checkAuthentication,   userController.update
 
 router.get('/sign-in', userController.signIn);
 router.get('/sign-up', userController.signUp);
+router.get('/sign-out', userController.destroySession);
+
+
 
 router.post('/create', userController.create);
 
@@ -17,7 +20,7 @@ router.post('/create', userController.create);
 //using passport as a middle for authentication and authorization
 router.post('/create-session', passport.authenticate(
 	'local',
-	{failureRedirect:'/users/sign-up'},
+	{failureRedirect:'/users/sign-up', failureFlash:"Invalid Username/Password"},
 ) ,userController.createSession);
 
 
@@ -25,6 +28,5 @@ router.post('/create-session', passport.authenticate(
 router.get('/auth/google', passport.authenticate('google', {scope: ['profile', 'email']}));
 router.get('/auth/google/callback', passport.authenticate('google', {failureRedirect: '/users/sign-in'}), userController.createSession);
 
-router.get('/sign-out', userController.destroySession);
 
 module.exports = router;

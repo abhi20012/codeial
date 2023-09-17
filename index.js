@@ -27,8 +27,10 @@ const path = require('path');
 //creating port for our server
 const port = 8000;
 
+
+//setup of chat server 
 const chatServer = require('http').Server(app);
-const chatSockets = require('./config/chat_sockets');
+const chatSockets = require('./config/chat_sockets').chatSockets(chatServer);
 chatServer.listen(5000);
 console.log("Chat server is listening on port 5000" )
 

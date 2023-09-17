@@ -1,5 +1,6 @@
 const Post = require('../models/post');
 const Comment = require('../models/comment');
+const Like = require('../models/like');
 
 //to create a new post
 module.exports.create = async function(req, res){
@@ -27,7 +28,7 @@ module.exports.create = async function(req, res){
 }
 
 module.exports.destroy = async function(req, res){
-	// console.log(req.params.id);
+	console.log(req.params.id);
 	try {
 		const post = await Post.findById(req.params.id);
 
@@ -61,6 +62,7 @@ module.exports.destroy = async function(req, res){
 			res.redirect('back');
 		}
 	} catch (error) {
+		console.log("This is error: ", error);
 		req.flash('error', 'error from post_controller');
 		return res.redirect('back');
 	}

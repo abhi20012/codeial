@@ -9,8 +9,8 @@ const env = require('./environment');
 passport.use(new googleStrategy({
     // Copy and Paste clientID and clientSecret from credentials
         clientID: env.google_client_id,
-        clientSecret:env.google_client_secret,
-        callbackURL:env.google_call_back_url
+        clientSecret: env.google_client_secret,
+        callbackURL: env.google_callback_url
     },
 
     async function(accessToken, refreshToken, profile, done){
