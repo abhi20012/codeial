@@ -1,83 +1,180 @@
+// const Comment = require('../models/comment');
+// const Post = require('../models/post');
+// const commentsMailer = require('../mailers/comment_mailers');
+// const queue = require('../config/kue');
+// const commentEmailWorker = require('../workers/comment_email_workers');
+
+// module.exports.create = async function(req, res){
+// 	try {
+// 		const post = await Post.findById(req.body.post);
+// 		if(post){
+// 			let comment = await Comment.create({
+// 				content:req.body.content,
+// 				post:req.body.post,
+// 				user:req.user._id
+// 			});
+
+// 			post.comments.push(comment);
+// 			post.save();
+
+// 			comment = await comment.populate('user', 'name email');
+// 			// commentsMailer.newComment(comment);
+
+// 			let job = queue.create('emails', comment).save(function(err){
+//                 if(err){
+//                     console.log('Error in sending to the queue', err);
+//                     return;
+//                 }
+//                 console.log('job enqueued', job.id);
+//             });
+
+// 			if (req.xhr){
+//                 return res.status(200).json({
+//                     data: {
+//                         comment: comment
+//                     },
+//                     message: "Comment created!"
+//                 });
+//             }
+// 			req.flash('success', 'Comment published!');
+// 			return res.redirect('/');
+// 		}
+		
+// 	} catch (error) {
+// 		console.log("Error while creating a comment", error);
+// 		return;
+// 	}
+// }
+
+// module.exports.destroy =  async function(req, res){
+// 	try {
+//         const comment = await Comment.findById(req.params.id);
+//         if(comment.user == req.user.id){
+// 			let postId = comment.post;
+	
+// 			comment.deleteOne();
+	
+// 			let post = Post.findByIdAndUpdate(postId, {$pull:{comments:req.params.id}});
+// 			await Like.deleteMany({likeable: comment._id, onModel: 'Comment'});
+
+
+// 			// send the comment id which was deleted back to the views
+//             if (req.xhr){
+//                 return res.status(200).json({
+//                     data: {
+//                         comment_id: req.params.id
+//                     },
+//                     message: "comment deleted"
+//                 });
+//             }
+
+// 			req.flash('success', 'Comment deleted!');
+
+// 			return res.redirect('back');
+// 		}else{
+//             req.flash('error', 'Unauthorized');
+//             return res.redirect('back');
+//         }
+//     } catch (error) {
+//         console.error("Error:", error);
+//         return res.redirect('back');
+//     }
+	
+// }
+
+
+
 const Comment = require('../models/comment');
 const Post = require('../models/post');
 const commentsMailer = require('../mailers/comment_mailers');
 const queue = require('../config/kue');
 const commentEmailWorker = require('../workers/comment_email_workers');
+const Like = require('../models/like');
 
-module.exports.create = async function(req, res){
-	try {
-		const post = await Post.findById(req.body.post);
-		if(post){
-			let comment = await Comment.create({
-				content:req.body.content,
-				post:req.body.post,
-				user:req.user._id
-			});
+module.exports.create = async function(request, respond){
 
-			post.comments.push(comment);
-			post.save();
+    try{
+        let post = await Post.findById(request.body.post);
 
-			comment = await comment.populate('user', 'name email');
-			// commentsMailer.newComment(comment);
+        if (post){
+            let comment = await Comment.create({
+                content: request.body.content,
+                post: request.body.post,
+                user: request.user._id
+            });
 
-			let job = queue.create('emails', comment).save(function(err){
+            post.comments.push(comment);
+            post.save();
+
+            comment = await comment.populate('user', 'name email avatar');
+
+            // Similar for comments to fetch the user's id!
+            // comment = await comment.populate('user', 'name email').execPopulate();  
+
+            commentsMailer.newComment(comment); 
+            // -----> this line inside comment_email_Worker.js work when job = queue.done().create()
+
+            let job = queue.create('emails', comment).save(function(err){
                 if(err){
                     console.log('Error in sending to the queue', err);
                     return;
                 }
                 console.log('job enqueued', job.id);
             });
+            
+            // commentsMailer.newComment(comment);
 
-			if (req.xhr){
-                return res.status(200).json({
+
+            if (request.xhr){
+                return respond.status(200).json({
                     data: {
                         comment: comment
                     },
                     message: "Comment created!"
                 });
             }
-			req.flash('success', 'Comment published!');
-			return res.redirect('/');
-		}
-		
-	} catch (error) {
-		console.log("Error while creating a comment", error);
-		return;
-	}
+
+            request.flash('success', 'Comment published!');
+            return respond.redirect('/');
+        }
+    }catch(err){
+        request.flash('error', err);
+        return;
+    }
+    
 }
 
-module.exports.destroy =  async function(req, res){
-	try {
-        const comment = await Comment.findById(req.params.id);
-        if(comment.user == req.user.id){
-			let postId = comment.post;
-	
-			comment.deleteOne();
-	
-			let post = Post.findByIdAndUpdate(postId, {$pull:{comments:req.params.id}});
-			await Like.deleteMany({likeable: comment._id, onModel: 'Comment'});
+module.exports.destroy = async function(request, respond){
+    try{
+        let comment = await Comment.findById(request.params.id);
+
+        if (comment.user == request.user.id){
+            let postId = comment.post;
+            comment.remove();
+            let post = Post.findByIdAndUpdate(postId, { $pull: {comments: request.params.id}});
+
+            await Like.deleteMany({likeable: comment._id, onModel: 'Comment'});
 
 
-			// send the comment id which was deleted back to the views
-            if (req.xhr){
-                return res.status(200).json({
+            // send the comment id which was deleted back to the views
+            if (request.xhr){
+                return respond.status(200).json({
                     data: {
-                        comment_id: req.params.id
+                        comment_id: request.params.id
                     },
                     message: "comment deleted"
                 });
             }
 
-			req.flash('success', 'Comment deleted!');
 
-			return res.redirect('back');
-		}else{
-            req.flash('error', 'Unauthorized');
-            return res.redirect('back');
+            request.flash('success', 'Comment deleted!');
+            return respond.redirect('back');
+        }else{
+            request.flash('error', 'Unauthorized');
+            return respond.redirect('back');
         }
-    } catch (error) {
-        console.error("Error:", error);
-        return res.redirect('back');
+    }catch(err){
+        request.flash('error', err);
+        return;
     }
-	
 }

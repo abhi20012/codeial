@@ -28,6 +28,7 @@
     <section id="user-list">
         <h3>Users</h3>
         <ul>
+            <% if(locals.user){ %>
             <% for(u of all_users){ %>
                 <% if(u.id != locals.user.id){ %>
                 <li>
@@ -41,6 +42,7 @@
                 </li>
                 <% } %>
             <% } %>
+            <% } %> 
         </ul>
     </section>
     <%- include('_chat') -%>
