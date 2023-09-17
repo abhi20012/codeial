@@ -3,27 +3,27 @@ const Comment = require('../../../models/comment');
 const Like = require('../../../models/like');
 
 
-// module.exports.index = async function(request, respond){
+module.exports.index = async function(request, respond){
     
-//     let posts = await Post.find({})
-//         .sort('-createdAt')
-//         .populate('user')
-//         .populate({
-//             path: 'comments',
-//             populate: {
-//                 path: 'user'
-//             },
-//             populate: { //for comment
-//                 path: 'likes'
-//             }
-//         })
-//         .populate('likes');   //for post
+    let posts = await Post.find({})
+        .sort('-createdAt')
+        .populate('user')
+        .populate({
+            path: 'comments',
+            populate: {
+                path: 'user'
+            },
+            populate: { //for comment
+                path: 'likes'
+            }
+        })
+        .populate('likes');   //for post
 
-//     return respond.json(200,{
-//         message: "List of Posts",
-//         posts: posts
-//     })
-// }
+    return respond.json(200,{
+        message: "List of Posts",
+        posts: posts
+    })
+}
 
 module.exports.destroy =  async function(request, respond){
     try{
